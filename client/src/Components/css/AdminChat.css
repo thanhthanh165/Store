@@ -1,0 +1,43 @@
+.user-message {
+    background-color: #e0f2f1; /* Màu nền tin nhắn người dùng */
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 5px;
+    clear: both; /* Đảm bảo rằng tin nhắn người dùng không lấn sang bên phải */
+    float: left; /* Đặt tin nhắn người dùng ở bên trái */
+    list-style-type: none;
+    overflow-wrap: break-word; /* Tự động xuống dòng khi đạt đến ngưỡng dòng */
+    max-width: 60%; /* Giới hạn chiều rộng tối đa của tin nhắn */
+  }
+  
+  .admin-message {
+    background-color: #ebe7db; /* Màu nền tin nhắn admin */
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 5px;
+    clear: both; /* Đảm bảo rằng tin nhắn admin không lấn sang bên trái */
+    float: right; /* Đặt tin nhắn admin ở bên phải */
+    list-style-type: none;
+    overflow-wrap: break-word; /* Tự động xuống dòng khi đạt đến ngưỡng dòng */
+    max-width: 60%; /* Giới hạn chiều rộng tối đa của tin nhắn */
+  }
+  /*  */
+
+  
+
+  .list-item-description {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    transition: max-width 0.5s ease; /* Thêm hiệu ứng chuyển đổi */
+  }
+  
+  .list-item:hover {
+    background-color: #f0f0f0; /* Màu nền khi hover */
+    cursor: pointer; /* Biểu tượng con trỏ khi hover */
+  }
+  
+  .selectedd{
+    background-color: #e6fbfa;
+  }

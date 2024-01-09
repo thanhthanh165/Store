@@ -1,0 +1,53 @@
+.status-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px; /* Khoảng cách giữa các nút */
+  }
+  
+  .status-button {
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .status-button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .selected {
+    background-color: #86b8ef;
+    color: #fff;
+  }
+  
+
+  .custom-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    marginBottom: 20px;
+    transition: transform 0.2s;
+    
+  }
+  
+  .custom-card:hover {
+    transform: scale(1.05); /* Hiệu ứng phóng to khi di chuột qua */
+  }
+  
+  .card-content {
+    display: flex;
+    
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .icon {
+    margin-bottom: 10px;
+  }
+  
+  .status {
+    font-size: 16px; /* Tùy chỉnh kích thước chữ */
+    font-weight: bold; /* Tùy chỉnh độ đậm của chữ */
+  }
+  

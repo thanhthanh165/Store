@@ -1,0 +1,50 @@
+const express = require('express');
+const { logEvent } = require('firebase/analytics');
+const router = express.Router();
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+  clientID: '784111210562-4r267lej393cop44tp55omic0a8tvjbr.apps.googleusercontent.com',
+  clientSecret: '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',
+  callbackURL: 'http://localhost:5000/api/auth/google/callback' // Thay đổi callbackURL tại đây
+}, (accessToken, refreshToken, profile, done) => {
+  // Xử lý thông tin user được trả về từ Google
+  // ở đây, bạn có thể lưu thông tin user vào database hoặc thực hiện các tác vụ khác
+  // console.log(profile);
+  done(null, profile);
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user); // Serialize người dùng bằng cách truyền thông tin người dùng cho hàm done
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user); // Deserialize người dùng bằng cách truyền thông tin người dùng cho hàm done
+});
+
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+// Xử lý callback sau khi đăng nhập thành công
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    // Chuyển hướng người dùng trở lại trang client sau khi đăng nhập thành công
+     // Lưu thông tin người dùng vào phiên
+    console.log(req.user);
+    res.redirect('http://localhost:3000/user'); // Thay đổi URL trang client tại đây
+  },
+  (err, req, res, next) => {
+    // Xử lý lỗi
+    console.error('Đăng nhập thất bại:', err);
+    res.status(500).send('Đăng nhập thất bại!');
+  }
+);
+
+
+
+module.exports = router;

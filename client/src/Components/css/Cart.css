@@ -1,0 +1,20 @@
+.cart-container{
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+/* Trong tệp CSS của bạn */
+.edit-link {
+    color: #3195ff; /* Màu văn bản */
+    text-decoration: none; /* Loại bỏ gạch chân */
+    font-weight: bold; /* Đậm chữ */
+    font-size: 12px; /* Kích thước chữ */
+    transition: color 0.2s; /* Hiệu ứng màu khi hover */
+    margin-top: 16px;
+    /* Tạo gạch chân khi hover */
+    &:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+  }
+  

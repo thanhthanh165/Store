@@ -1,0 +1,113 @@
+.product_inf{
+    padding: 40PX 5%;
+}
+
+.smallImage{
+    max-height: 100%;
+}
+
+.imageContainer {
+    max-height: 100%;
+    max-width: 100%;
+  }
+  
+  .largeImage {
+    width: 100%;
+    height: auto;
+  }
+  .imageRow {
+    display: flex;
+    align-items: flex-start;
+  }  
+
+
+  /*  */
+  .size-item {
+    margin-bottom: 16px;
+  }
+  
+  .size-item .ant-form-item-label {
+    font-weight: bold;
+  }
+  
+  .size-item input {
+    width: 80px;
+  }
+  
+  .delete_button {
+    
+    border: none;
+    color: #ff4d4f;
+    cursor: pointer;
+    font-size: 30px;
+    
+  }
+  
+  .delete_button:hover {
+    color: #ff7875;
+  }
+  
+  .formItemContainer {
+    display: flex;
+    align-items: center;
+  }
+  
+  .delete_button_wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .deleteButtonIcon {
+    vertical-align: middle;
+  }
+
+  /*  */
+  .product_reviews {
+    margin-top: 20px;
+  }
+  
+  .reviewList {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 16px;
+  }
+  
+  .reviewItem {
+   
+    padding: 16px;
+    
+    
+    
+    
+  }
+  
+  .avatar {
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .userName {
+    text-align: center;
+    margin-top: 8px;
+  }
+  
+  .rating {
+    font-size: 12px;
+    display:flex;
+    justify-content: center;  
+  }
+  
+  .createdAt {
+    font-size: 12px;
+    color: #888;
+  }
+  
+  .comment {
+    margin-top: 16px;
+  }
+
+
+  /* CSS messenger*/
+  
