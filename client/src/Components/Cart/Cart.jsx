@@ -1,4 +1,4 @@
-import { Button, Card, Col, Empty, Modal, Radio, Row, Select, Table, message } from 'antd';
+import { Button, Card, Input, Col, Empty, Modal, Radio, Row, Select, Table, message } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ const Cart = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [product, setProduct] = useState();
   const [totalBill, setTotalBill] = useState(0);
   const [user, setUser] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState(''); //
@@ -69,12 +70,39 @@ const Cart = () => {
     // Ẩn modal khi người dùng không đồng ý
     setShowModal(false);
   };
+  const handleChange = (size, product_, quantity) => {
+    axios
+      .get(`${CONFIG.API_URL}homepage/products/${product_.productId}`)
+      .then((response) => {
+        setProduct(response.data.product);
+        size.max = response.data.product.total;
+        console.log('product', product);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    quantity = parseInt(quantity);
+    product_.sizeAndQuantitySizeWant[0].quantity = quantity;
+    let totalBillUpdate = totalBill - product_.productTotal;
+    product_.productTotal = quantity * product_.price;
+    product_.totalBill = product_.productTotal;
+    totalBillUpdate += product_.totalBill;
+    setTotalBill(totalBillUpdate);
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.productId == product_.productId) return product_;
+      return item;
+    });
+    setCartItems(updatedCartItems);
+
+    console.log(size, product_, cartItems);
+  };
 
   const columns = [
     {
       title: 'Tên sản phẩm',
       dataIndex: 'name',
       key: 'name',
+      render: (name_, record) => <a href={'./products/' + record.productId}>{name_}</a>,
     },
     {
       title: 'Image',
@@ -100,7 +128,16 @@ const Cart = () => {
             return (
               <div key={index}>
                 {/* Sử dụng một giá trị duy nhất từ dữ liệu làm key */}
-                <p>{`Size: ${size.sizeName} - Số lượng : ${size.quantity}`}</p>
+                <Input
+                  type="number"
+                  min={1}
+                  max={size.max ? size.max : size.quantity + 1}
+                  placeholder="Nhập số lượng"
+                  defaultValue={size.quantity}
+                  onChange={(e) => handleChange(size, record, e.target.value)}
+                  style={{ width: '100%' }}
+                />
+                {size.max && <p>{`Số lượng còn kho : ${size.max}`}</p>}
               </div>
             );
           })}
@@ -108,14 +145,14 @@ const Cart = () => {
       ),
     },
     {
-      title: 'Giá (giá trên mỗi sản phẩm)',
+      title: 'Giá trên mỗi sản phẩm',
       dataIndex: 'price',
       key: 'price', // Đảm bảo rằng key là duy nhất
       align: 'center',
       render: (price) => <span style={{ whiteSpace: 'nowrap' }}>{price?.toLocaleString()} đ</span>,
     },
     {
-      title: 'Giá ',
+      title: 'Thành tiền ',
       dataIndex: 'productTotal',
       key: 'productTotal', // Sửa key thành "productTotal", đảm bảo key là duy nhất
       align: 'center',
@@ -127,13 +164,13 @@ const Cart = () => {
       key: 'action',
       render: (text, record) => (
         <>
-          <Button type="danger" onClick={() => handleDeleteItem(record)}>
+          <Button type="dashed" onClick={() => handleDeleteItem(record)}>
             Xóa
           </Button>
 
-          <Button type="primary" onClick={() => handleEditItem(record)}>
+          {/* <Button type="primary" onClick={() => handleEditItem(record)}>
             Sửa
-          </Button>
+          </Button> */}
         </>
       ),
     },
@@ -171,8 +208,10 @@ const Cart = () => {
   };
 
   const handleEditItem = (itemToEdit) => {
+    const number = parseInt(itemToEdit['productTotal']) / parseInt(itemToEdit['price']);
+    console.log(number);
     // Chuyển hướng đến trang ViewProduct của sản phẩm với id tương ứng
-    navigate(`/products/${itemToEdit.productId}`);
+    navigate(`/products/${itemToEdit.productId}?quantity=${number}`);
   };
 
   // xử lý thanh toán
@@ -305,7 +344,7 @@ const Cart = () => {
             <>
               <Row style={{ marginTop: '36px' }}>
                 <Col span={24}>
-                  <Table dataSource={records} columns={columns} pagination={false} rowKey={'index'} />
+                  <Table dataSource={records.reverse()} columns={columns} pagination={false} rowKey={'index'} />
                 </Col>
               </Row>
               <Row style={{ marginTop: '36px' }}>

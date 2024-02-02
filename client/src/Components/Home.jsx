@@ -2,8 +2,7 @@ import React from 'react';
 import { default as banner1, default as banner5 } from '../Img/new collection banner.png';
 import banner2 from '../Img/sale banner.png';
 import banner6 from '../Img/Black Friday.png';
-import banner7 from '../Img/Sale.png'
-
+import banner7 from '../Img/Sale.png';
 
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import { Button, Card, Carousel, Col, Row, Typography } from 'antd';
@@ -20,7 +19,7 @@ import styles from './css/Home.module.css';
 import { IoCartOutline, IoChatbubbleEllipsesOutline, IoLockClosedOutline, IoRefreshOutline } from 'react-icons/io5';
 const { Title } = Typography;
 const sliderSettings = {
-  dots: false,
+  dots: true,
   infinite: true,
   speed: 1000,
   slidesToShow: 4,
@@ -28,6 +27,7 @@ const sliderSettings = {
   autoplay: true,
   autoplaySpeed: 4000,
 };
+
 function Home() {
   //xu ly banner
   const carouselRef = useRef(null);
@@ -40,6 +40,7 @@ function Home() {
     carouselRef.current.prev();
   };
 
+  const [slidesToShow, setSlidesToShow] = useState(4);
   //xu ly new arial
   const [newProducts, setNewProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +57,25 @@ function Home() {
 
     navigate(`/products/${productId}`);
   };
+  useEffect(() => {
+    const updateSlidesToShow = () => {
+      // Your logic to determine slidesToShow based on window width
+      if (window.innerWidth <= 575) {
+        setSlidesToShow(2);
+      } else if (window.innerWidth <= 750) {
+        setSlidesToShow(3);
+      } else {
+        setSlidesToShow(4);
+      }
+    };
+
+    updateSlidesToShow();
+    window.addEventListener('resize', updateSlidesToShow);
+
+    return () => {
+      window.removeEventListener('resize', updateSlidesToShow);
+    };
+  }, []);
 
   useEffect(() => {
     console.log(CONFIG);
@@ -103,7 +123,7 @@ function Home() {
       </div>
 
       <div className={styles.newArrivals}>
-        <Title level={2}>Sản phẩm bán chạy</Title>
+        <Title level={2}>Sản phẩm mới nhất</Title>
         <p className={styles.newArrivalsTitle_h6}>Xem ngay</p>
         <Row gutter={[16, 16]} justify="center" className="newArrivals_row_img">
           {loading ? (
@@ -116,8 +136,7 @@ function Home() {
                   onClick={() => handleCardClick(product._id)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <Card.Meta title={product.name} description={`Giá: ${product.price?.toLocaleString("en-US")}`} />
-
+                  <Card.Meta title={product.name} description={`Giá: ${product.price?.toLocaleString('en-US')}`} />
                 </Card>
               </Col>
             ))
@@ -134,7 +153,9 @@ function Home() {
                   <IoCartOutline size={40} /> {/* Đặt kích thước của icon */}
                 </div>
                 <div className={styles.benefitTextContainer}>
-                  <Title level={5} style={{color: '#D2691E'}}>Free Ship</Title>
+                  <Title level={5} style={{ color: '#D2691E' }}>
+                    Free Ship
+                  </Title>
                   <p className={styles.benefitText}>Hỗ trợ freeship từ đơn hàng từ 500.000 vnd</p> {/* Tùy chỉnh kích thước chữ */}
                 </div>
               </div>
@@ -148,8 +169,9 @@ function Home() {
                   <IoChatbubbleEllipsesOutline size={40} /> {/* Đặt kích thước của icon */}
                 </div>
                 <div className={styles.benefitTextContainer}>
-                  
-                  <Title level={5} style={{color: '#D2691E'}}>Hỗ Trợ 24/7</Title>
+                  <Title level={5} style={{ color: '#D2691E' }}>
+                    Hỗ Trợ 24/7
+                  </Title>
                   <p className={styles.benefitText}>
                     Đội ngũ hỗ trợ của chúng tôi sẽ luôn có mặt để hỗ trợ bạn<nav></nav>
                   </p>{' '}
@@ -166,7 +188,9 @@ function Home() {
                   <IoRefreshOutline size={40} /> {/* Đặt kích thước của icon */}
                 </div>
                 <div className={styles.benefitTextContainer}>
-                  <Title level={5} style={{color: '#D2691E'}}>Đổi trả</Title>
+                  <Title level={5} style={{ color: '#D2691E' }}>
+                    Đổi trả
+                  </Title>
                   <p className={styles.benefitText}>Hỗ trợ khách hàng đổi trả lên tới 7 ngày </p> {/* Tùy chỉnh kích thước chữ */}
                 </div>
               </div>
@@ -180,7 +204,9 @@ function Home() {
                   <IoLockClosedOutline size={40} /> {/* Đặt kích thước của icon */}
                 </div>
                 <div className={styles.benefitTextContainer}>
-                <Title level={5} style={{color: '#D2691E'}}>Kiểm tra thanh toán</Title>
+                  <Title level={5} style={{ color: '#D2691E' }}>
+                    Kiểm tra thanh toán
+                  </Title>
                   <p className={styles.benefitText}>Hỗ trợ kiểm tra hàng trước khi thanh toán </p> {/* Tùy chỉnh kích thước chữ */}
                 </div>
               </div>
@@ -188,7 +214,6 @@ function Home() {
           </Col>
         </Row>
       </div>
-      
 
       <div className={styles.promo}>
         <div
@@ -211,15 +236,22 @@ function Home() {
           </Button> */}
         </div>
       </div>
-            {/* // đây là best seller */}
+      {/* // đây là best seller */}
       <div className={styles.newArrivals}>
-      <Title level={2}>Sản phẩm bán chạy</Title>
-        <p className={styles.newArrivalsTitle_h6}>Nhanh tay để trải nghiệm những sản phẩm HOT nhất của nhà NorthStarr bạn nhé </p>
+        <Title level={2}>Sản phẩm bán chạy</Title>
+        <p className={styles.newArrivalsTitle_h6}>Nhanh tay để trải nghiệm những sản phẩm HOT nhất của nhà Jewelry E-Storer bạn nhé </p>
 
-        <Slider {...sliderSettings}>
+        <Slider {...sliderSettings} slidesToShow={slidesToShow} justify="center">
           {bestSellingProducts.map((product) => (
             <div key={product._id} onClick={() => handleCardClick(product._id)}>
-              <div
+              <Card
+                cover={<img src={product.imageUrl[0]} alt={product.name} />}
+                onClick={() => handleCardClick(product._id)}
+                style={{ cursor: 'pointer', padding: '5px', margin: '5px' }}
+              >
+                <Card.Meta title={product.name} description={`Giá: ${product.price?.toLocaleString('en-US')}`} />
+              </Card>
+              {/* <div
                 style={{
                   border: '1px solid #ccc',
                   borderRadius: '8px',
@@ -235,26 +267,27 @@ function Home() {
                 <div>
                   <h5 style={{ fontSize: '18px', color: '#333', marginTop: '20px' }}>{product.name}</h5>
                   <p style={{ color: '#666' }}>
-                    <strong>Giá:</strong> {product.price?.toLocaleString("en-US")}
+                    <strong>Giá:</strong> {product.price?.toLocaleString('en-US')}
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
           ))}
         </Slider>
       </div>
 
       <div className={styles.bannerFooter}>
-      <Title level={2} style={{textAlign:'center'}}>NorthStar </Title>
-        
+        <Title level={2} style={{ textAlign: 'center' }}>
+          Jewelry E-Store{' '}
+        </Title>
+
         <p className={styles.newArrivalsTitle} style={{ color: 'rgb(168, 178, 186)' }}>
-          Mua hàng trên NorthStar luôn là một trải nghiệm ấn tượng,Dù bạn đang có nhu cầu mua bất kỳ mặt hàng nào thì 
-         
+          Mua hàng trên Jewelry E-Store luôn là một trải nghiệm ấn tượng,Dù bạn đang có nhu cầu mua bất kỳ mặt hàng nào thì
         </p>
 
         <p className={styles.newArrivalsTitle} style={{ color: 'rgb(168, 178, 186)', marginBottom: '40px' }}>
           {' '}
-          NorthStar cũng sẽ đảm bảo cung cấp cho bạn những sản phẩm ưng ý.
+          Jewelry E-Store cũng sẽ đảm bảo cung cấp cho bạn những sản phẩm ưng ý.
         </p>
 
         <button

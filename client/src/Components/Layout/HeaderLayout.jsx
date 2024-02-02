@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import logoImage from '../../Img/Logo store.png';
 import styles from '../css/Header.module.css';
+import Menu_custom from './menu';
 
 const { Header } = Layout;
 
-function HeaderLayout() {
+const HeaderLayout = () => {
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -69,120 +70,110 @@ function HeaderLayout() {
   };
 
   return (
-    <Header style={{ backgroundColor: '#fff', padding: '0', paddingLeft: '5%', paddingRight: '5%' }}>
-      <Row align="middle" style={{ alignItems: 'stretch' }}>
-        {/* <Col flex={1}>
-            <Link to="/" className={styles.logo}>
-              Đây là Logo
+    <div>
+      <Header
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 999,
+          marginBottom: '60px',
+          backgroundColor: '#fff',
+          padding: '0',
+          paddingLeft: '5%',
+          paddingRight: '5%',
+        }}
+      >
+        <Row align="middle" style={{ alignItems: 'stretch' }}>
+          <Col flex={1} style={{ display: 'flex', alignItems: 'center' }}>
+            <Link to="/">
+              <img src={logoImage} alt="Logo" style={{ maxHeight: '64px', display: 'block', maxWidth: '100%' }} />
             </Link>
-          </Col> */}
-        <Col flex={1}>
-          <Link to="/">
-            <img src={logoImage} alt="Logo" style={{ maxHeight: '64px', display: 'block', maxWidth: '100%' }} />
-          </Link>
-        </Col>
-        <Col flex={1}>
-          <Menu mode="horizontal" style={{ borderBottom: 'none', color: "Peru" }} defaultSelectedKeys={['home']}>
-            <Menu.Item key="home">
-              <Link to="/" className={styles.menuItem}>
-                Trang chủ
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="products">
-              <Link to="/products" className={styles.menuItem}>
-                Sản phẩm
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="contact">
-              <Link to="/contact" className={styles.menuItem}>
-                Liên hệ
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="order-info">
-              <Link to="/order-info" className={styles.menuItem}>
-                Quản lý đơn hàng
-              </Link>
-            </Menu.Item>
-          </Menu>
-        </Col>
-        <Col flex={1} style={{ textAlign: 'right' }}>
-          {isLoggedIn ? (
-            <>
-              <div>
-                <span style={{ marginRight: 14 }}>Xin chào {user.name.split(' ')[0] + ' ! '} </span>
-                <Button
-                  shape="circle"
-                  icon={<ShoppingCartOutlined />}
-                  onClick={handleCartClick}
-                  style={{ marginRight: 5, verticalAlign: 'middle' }}
-                />
-                <span className="avatar-wrapper" onClick={handleUserClick}>
-                  {user?.picture ? <Avatar src={user.picture} /> : <Avatar icon={<UserOutlined />} />}
-                </span>
+          </Col>
+          <Col flex={1}>
+            <Menu_custom isLoggedIn={isLoggedIn} setMenuVisible={setMenuVisible} />
+          </Col>
+          <Col flex={1} style={{ textAlign: 'right' }}>
+            {isLoggedIn ? (
+              <>
+                <div>
+                  <span style={{ marginRight: 14 }}>Xin chào {user.name.split(' ')[0] + ' ! '} </span>
+                  <Button
+                    shape="circle"
+                    icon={<ShoppingCartOutlined />}
+                    onClick={handleCartClick}
+                    style={{ marginRight: 5, verticalAlign: 'middle' }}
+                  />
+                  <span className="avatar-wrapper" onClick={handleUserClick}>
+                    {user?.picture ? <Avatar src={user.picture} /> : <Avatar icon={<UserOutlined />} />}
+                  </span>
 
+                  {menuVisible && (
+                    <Menu
+                      onClick={handleMenuClick}
+                      style={{
+                        position: 'absolute',
+                        right: 0,
+                        zIndex: 4,
+                        border: '1px solid #ddd',
+                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)',
+                        borderRadius: '10px', // Đường viền cho 4 góc
+                      }}
+                    >
+                      <Menu.Item key="user-info">
+                        <Link to="/user-info" className={styles.menuItem}>
+                          Xem thông tin người dùng
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="order-info">
+                        <Link to="/order-info" className={styles.menuItem}>
+                          Xem đơn hàng
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="logout" onClick={handleLogout}>
+                        <span className={styles.menuItem}>Đăng xuất</span>
+                      </Menu.Item>
+                    </Menu>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Button shape="circle" icon={<ShoppingCartOutlined />} onClick={handleCartClick} style={{ marginRight: 5 }} />
+                <Button shape="circle" icon={<UserOutlined />} onClick={handleUserClick} />
                 {menuVisible && (
                   <Menu
                     onClick={handleMenuClick}
                     style={{
                       position: 'absolute',
                       right: 0,
-                      zIndex: 4,
+                      zIndex: 999,
                       border: '1px solid #ddd',
                       boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)',
-                      borderRadius: '10px', // Đường viền cho 4 góc
+                      borderRadius: '10px',
                     }}
                   >
-                    <Menu.Item key="user-info">
-                      <Link to="/user-info" className={styles.menuItem}>
-                        Xem thông tin người dùng
+                    <Menu.Item key="login">
+                      <Link to="/login" className={styles.menuItem}>
+                        Đăng nhập
                       </Link>
                     </Menu.Item>
-                    <Menu.Item key="order-info">
-                      <Link to="/order-info" className={styles.menuItem}>
-                        Xem đơn hàng
+                    <Menu.Item key="register">
+                      <Link to="/register" className={styles.menuItem}>
+                        Đăng ký
                       </Link>
-                    </Menu.Item>
-                    <Menu.Item key="logout" onClick={handleLogout}>
-                      <span className={styles.menuItem}>Đăng xuất</span>
                     </Menu.Item>
                   </Menu>
                 )}
-              </div>
-            </>
-          ) : (
-            <>
-              <Button shape="circle" icon={<ShoppingCartOutlined />} onClick={handleCartClick} style={{ marginRight: 5 }} />
-              <Button shape="circle" icon={<UserOutlined />} onClick={handleUserClick} />
-              {menuVisible && (
-                <Menu
-                  onClick={handleMenuClick}
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    zIndex: 4,
-                    border: '1px solid #ddd',
-                    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)',
-                    borderRadius: '10px',
-                  }}
-                >
-                  <Menu.Item key="login">
-                    <Link to="/login" className={styles.menuItem}>
-                      Đăng nhập
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item key="register">
-                    <Link to="/register" className={styles.menuItem}>
-                      Đăng ký
-                    </Link>
-                  </Menu.Item>
-                </Menu>
-              )}
-            </>
-          )}
-        </Col>
-      </Row>
-    </Header>
+              </>
+            )}
+          </Col>
+        </Row>
+      </Header>
+      <div style={{ height: '55px' }}></div>
+    </div>
   );
-}
+};
 
 export default HeaderLayout;

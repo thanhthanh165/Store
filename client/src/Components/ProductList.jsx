@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import CONFIG from '../config';
 const { Option } = Select;
 
-function ProductList() {
+function ProductList(props) {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
@@ -25,7 +25,7 @@ function ProductList() {
   useEffect(() => {
     fetchBrands();
     fetchProducts();
-  }, [currentPage, priceRange, selectedBrands, sortByPrice, sortByBestSelling, searchKeyword]);
+  }, [currentPage, priceRange, selectedBrands, sortByPrice, sortByBestSelling, searchKeyword, props]);
 
   const fetchProducts = async () => {
     try {
@@ -41,10 +41,13 @@ function ProductList() {
           searchKeyword: searchKeyword,
         },
       });
+      let data = response.data.products;
+      console.log('catagory', props['category']);
+      props['category'] && (data = data.filter((product) => product.category === props['category']));
+      setProducts(data);
 
-      setProducts(response.data.products);
-      console.log(response.data.products);
-      setTotalProducts(response.data.totalProducts);
+      console.log(data);
+      setTotalProducts(response.data.totalPages);
     } catch (error) {
       console.error(error);
     }
@@ -95,21 +98,20 @@ function ProductList() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 marginTop: '20px',
-            
               }}
             >
               <div>{priceRange[0]}</div>
               <div>{priceRange[1]}</div>
             </div>
             <Slider range step={50000} min={0} max={500000} value={priceRange} onChange={handlePriceChange} />
-            
+
             <Radio.Group onChange={(e) => setSortByPrice(e.target.value)} value={sortByPrice}>
               <Radio value="lowToHigh">Giá từ thấp đến cao</Radio>
               <Radio value="highToLow">Giá từ cao đến thấp</Radio>
             </Radio.Group>
           </div>
 
-          <div style={{ marginBottom: 32 }}>
+          {/* <div style={{ marginBottom: 32 }}>
             <h3 style={{ color: 'rgb(0,0,0)' }}>Thương hiệu</h3>
 
             <Checkbox.Group
@@ -118,7 +120,7 @@ function ProductList() {
               onChange={(values) => setSelectedBrands(values)}
               style={{ width: '100%', marginTop: 8 }}
             />
-          </div>
+          </div> */}
 
           <div style={{ marginBottom: 32 }}>
             <h3 style={{ color: 'rgb(0,0,0)', marginBottom: '16px' }}>Top sản phẩm</h3>

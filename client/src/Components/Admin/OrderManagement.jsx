@@ -138,7 +138,7 @@ function Order() {
                 </span>
               </div>
               <div style={{ flex: 1 }}>
-                <span>Lúc : {moment(order.createdAt).locale('vi').format('DD/MM/YYYY - HH:mm')}</span>
+                <span>Thời gian đặt hàng : {moment(order.createdAt).locale('vi').format('DD/MM/YYYY - HH:mm')}</span>
               </div>
               <div style={{ flex: 0 }}>
                 <Button onClick={() => toggleExpanded(order._id)} style={{ marginLeft: '10px' }}>
@@ -150,9 +150,14 @@ function Order() {
             {expandedOrderId === order._id && (
               <>
                 <p>
-                  Tên: {order.userId.name} (Sdt : {order.userId.phone})
+                  <strong>Tên:</strong> {order.userId.name} (Sdt : {order.userId.phone})
                 </p>
-                <p>Phương thức thanh toán : {order.paymentMethod}</p>
+                <p>
+                  <strong>Địa chỉ người nhận:</strong> {order.selectedAddress}
+                </p>
+                <p>
+                  <strong>Phương thức thanh toán :</strong> {order.paymentMethod}
+                </p>
 
                 <List
                   dataSource={order.cartItems}
@@ -165,9 +170,7 @@ function Order() {
                       />
                       <div>
                         {item.sizeAndQuantitySizeWant.map((sizeQty, i) => (
-                          <p key={i}>
-                            Size: {sizeQty.sizeName} - Số lượng: {sizeQty.quantity}
-                          </p>
+                          <p key={i}>Số lượng: {sizeQty.quantity}</p>
                         ))}
                       </div>
                     </List.Item>

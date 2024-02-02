@@ -1,10 +1,11 @@
-import { Button, Checkbox, Form, Input, InputNumber, Upload, message } from "antd";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import CONFIG from "../../config";
+import { Button, Checkbox, Form, Input, InputNumber, Upload, Select, message } from 'antd';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import CONFIG from '../../config';
 
 function EditProduct() {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
@@ -55,16 +56,13 @@ function EditProduct() {
   //Lấy ra các Url vừa xóa
 
   useEffect(() => {
-    const deletedImageUrls = initialImageUrls.filter(
-      (url) => !fileList.some((file) => file.url === url)
-    );
+    const deletedImageUrls = initialImageUrls.filter((url) => !fileList.some((file) => file.url === url));
 
     setDeletedImageUrls(deletedImageUrls);
   }, [fileList, initialImageUrls]);
 
   const handleImageChange = ({ fileList }) => {
     setFileList(fileList);
-    
   };
 
   const handleCheckboxChange = (sizeName, checked) => {
@@ -80,15 +78,14 @@ function EditProduct() {
       });
     }
   };
-  
+
   const handleQuantityChange = (sizeName, value) => {
     setSizeQuantities((prevQuantities) => ({
       ...prevQuantities,
       [sizeName]: value,
     }));
   };
-  
-  
+
   const isChecked = (sizeName) => {
     return sizeQuantities.hasOwnProperty(sizeName);
   };
@@ -97,31 +94,25 @@ function EditProduct() {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      
-      
       // data xử lý ảnh
-    const data = { ...values,sizes: sizeQuantities };
+      const data = { ...values, sizes: sizeQuantities };
       const formData = new FormData();
       fileList.forEach((file) => {
-        formData.append("images", file.originFileObj);
+        formData.append('images', file.originFileObj);
       });
 
-      formData.append("data", JSON.stringify(data));
+      formData.append('data', JSON.stringify(data));
 
-      formData.append("deletedImages", JSON.stringify(deletedImageUrls));
+      formData.append('deletedImages', JSON.stringify(deletedImageUrls));
       console.log(deletedImageUrls);
       console.log([...formData]);
-      await axios.put(
-        `${CONFIG.API_URL}products/${id}/update`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.put(`${CONFIG.API_URL}products/${id}/update`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       console.log([...formData]);
-      message.success("Product updated successfully");
+      message.success('Product updated successfully');
 
       form.resetFields();
     } catch (error) {
@@ -129,6 +120,7 @@ function EditProduct() {
       // show error message
     } finally {
       setLoading(false);
+      navigate('/admin/quan-ly-san-pham');
     }
   };
 
@@ -141,7 +133,7 @@ function EditProduct() {
           rules={[
             {
               required: true,
-              message: "Please input the name of the product!",
+              message: 'Please input the name of the product!',
             },
           ]}
         >
@@ -154,17 +146,15 @@ function EditProduct() {
           rules={[
             {
               required: true,
-              message: "Please input the price of the product!",
+              message: 'Please input the price of the product!',
             },
           ]}
         >
           <InputNumber
             defaultValue={0}
             min={0}
-            formatter={(value) =>
-              `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
-            parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+            formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
           />
         </Form.Item>
 
@@ -174,7 +164,7 @@ function EditProduct() {
           rules={[
             {
               required: true,
-              message: "Please input the description of the product!",
+              message: 'Please input the description of the product!',
             },
           ]}
         >
@@ -187,75 +177,80 @@ function EditProduct() {
           rules={[
             {
               required: true,
-              message: "Please input the category of the product!",
+              message: 'Please input the category of the product!',
             },
           ]}
         >
-          <Input placeholder="Loại sản phẩm" />
+          <Select
+            type="select"
+            defaultValue={'Chọn loại sản phẩm'}
+            options={[
+              {
+                value: '1',
+                label: 'Nhẫn',
+              },
+              {
+                value: '2',
+                label: 'Dây chuyền',
+              },
+            ]}
+          />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           label="Thương hiệu"
           name="brand"
           rules={[
             {
               required: true,
-              message: "Please input the brand of the product!",
+              message: 'Please input the brand of the product!',
             },
           ]}
         >
           <Input placeholder=" Nhập thương hiệu" />
-        </Form.Item>
+        </Form.Item> */}
 
-        <Form.Item label="Size">
-          <ul style={{ listStyle: "none" }}>
-            {Object.entries(sizes).map(([sizeName, sizeQuantity]) => (
-              <li key={sizeName}>
-                <Checkbox
-                  onChange={(e) =>
-                    handleCheckboxChange(sizeName, e.target.checked)
-                  }
-                  checked={isChecked(sizeName)}
-                >
-                  {"Size " + sizeName}{" "}
-                  <span style={{ marginLeft: "10px" }}>
-                    {" "}
-                    ( <span style={{ color: "blue" }}> Số lượng </span>:{" "}
-                    {sizeQuantity} )
-                  </span>
-                </Checkbox>
-                {isChecked(sizeName) && (
-                  <div style={{ marginLeft: "20px", padding: "10px 0px" }}>
-                    <span>Thay đổi số lượng Size </span>
-                    <InputNumber
-                      value={sizeQuantities[sizeName]}
-                      onChange={(value) =>
-                        handleQuantityChange(sizeName, value)
-                      }
-                      style={{ marginLeft: "10px" }}
-                    />
-                  </div>
-                )}
-              </li>
-            ))}
+        <Form.Item label="Số lượng">
+          <ul style={{ listStyle: 'none' }}>
+            {Object.entries(sizes).map(([sizeName, sizeQuantity]) =>
+              sizeQuantity > 0 ? (
+                <li key={sizeName}>
+                  <Checkbox onChange={(e) => handleCheckboxChange(sizeName, e.target.checked)} checked={isChecked(sizeName)}>
+                    {'Thay đổi '}{' '}
+                    <span style={{ marginLeft: '10px' }}>
+                      {' '}
+                      ( <span style={{ color: 'blue' }}> Số lượng </span>: {sizeQuantity} )
+                    </span>
+                  </Checkbox>
+                  {isChecked(sizeName) && (
+                    <div style={{ marginLeft: '20px', padding: '10px 0px' }}>
+                      <span>Số sản phẩm hiện có </span>
+                      <InputNumber
+                        // value={sizeQuantities[sizeName]}
+
+                        defaultValue={sizeQuantity}
+                        onChange={(value) => handleQuantityChange(sizeName, value)}
+                        style={{ marginLeft: '10px' }}
+                      />
+                    </div>
+                  )}
+                </li>
+              ) : (
+                <></>
+              ),
+            )}
           </ul>
         </Form.Item>
 
         <Form.Item label="Image">
-          <Upload
-            name="image"
-            listType="picture-card"
-            fileList={fileList}
-            onChange={handleImageChange}
-            multiple={false}
-          >
-            {fileList.length < 5 && "+ Upload"}
+          <Upload name="image" listType="picture-card" fileList={fileList} onChange={handleImageChange} multiple={false}>
+            {fileList.length < 5 && '+ Upload'}
           </Upload>
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={loading}>
-            Đăng
+            Cập nhật thông tin
           </Button>
         </Form.Item>
       </Form>

@@ -1,6 +1,5 @@
 import { Layout } from 'antd';
 
-
 import HeaderLayout from './Layout/HeaderLayout';
 
 import { Outlet, Route, Routes } from 'react-router-dom';
@@ -20,7 +19,6 @@ import Login from './User/Login';
 import Register from './User/Register';
 import UserInfo from './User/UserInfo';
 import ViewProduct from './ViewProduct';
-
 const { Header, Content } = Layout;
 
 function HomePage() {
@@ -32,6 +30,8 @@ function HomePage() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<ProductList />} />
+            <Route path="/products/ring" element={<ProductList category="1" />} />
+            <Route path="/products/necklace" element={<ProductList category="2" />} />
             <Route path="/products/:id" element={<ViewProduct />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
@@ -46,6 +46,7 @@ function HomePage() {
             <Route path="/chat/:productId" element={<UserChat />} />
           </Route>
         </Routes>
+
         <Outlet />
       </Content>
       <FooterLayout></FooterLayout>
