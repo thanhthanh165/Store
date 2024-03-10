@@ -6,7 +6,7 @@ import styles from '../css/Header.module.css';
 
 const items = [
   {
-    isLoggedIn: false,
+    isloggedin: false,
     label: (
       <Link to="/" className={styles.menuItem}>
         Trang chủ
@@ -16,7 +16,7 @@ const items = [
     // icon: <HomeOutlined />,
   },
   {
-    isLoggedIn: false,
+    isloggedin: false,
     label: 'Sản phẩm',
     children: [
       {
@@ -46,7 +46,7 @@ const items = [
     ],
   },
   {
-    isLoggedIn: false,
+    isloggedin: false,
     label: (
       <Link to="/contact" className={styles.menuItem}>
         Liên hệ
@@ -55,7 +55,7 @@ const items = [
     key: 'contact',
   },
   {
-    isLoggedIn: true,
+    isloggedin: true,
     label: (
       <Link to="/order-info" className={styles.menuItem}>
         Quản lý đơn hàng
@@ -64,7 +64,7 @@ const items = [
     key: 'order-info',
   },
 ];
-const Menu_custom = ({ isLoggedIn, setMenuVisible }) => {
+const Menu_custom = ({ isloggedin, setMenuVisible }) => {
   const { pathname } = useLocation();
   const [current, setCurrent] = useState('');
   const onClick = (e) => {
@@ -97,7 +97,7 @@ const Menu_custom = ({ isLoggedIn, setMenuVisible }) => {
       onClick={onClick}
       selectedKeys={[current]}
       mode="horizontal"
-      items={items.filter((item) => !item.isLoggedIn || isLoggedIn)}
+      items={items.filter((item) => !item.isloggedin || isloggedin)}
     />
   );
 };

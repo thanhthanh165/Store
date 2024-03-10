@@ -19,6 +19,7 @@ const UserInfo = () => {
   const [showAdditionalAddress, setShowAdditionalAddress] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteAddressIndex, setDeleteAddressIndex] = useState(null);
+  const [file_, setFile] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -31,6 +32,7 @@ const UserInfo = () => {
           const response = await axios.get(`${CONFIG.API_URL}auth/user/${parsedUser._id}`);
           const { user } = response.data;
           setUserData(user);
+          setFile(`${CONFIG.HOST}` + user.picture);
         } catch (error) {
           console.error('Lỗi khi lấy thông tin người dùng:', error);
         }
@@ -48,14 +50,48 @@ const UserInfo = () => {
 
   useEffect(() => {
     axios
-      .get('https://provinces.open-api.vn/api/?depth=3')
+      .get('https://vapi.vnappmob.com/api/province')
       .then((response) => {
-        setProvinces(response.data);
+        console.log('results', response.data['results']);
+        setProvinces(response.data['results']);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
+
+  const handleFileChange = (info) => {
+    if (info.file.status === 'done') {
+      // Xử lý khi tải lên thành công, lưu đường dẫn ảnh vào state hoặc dispatch action
+      console.log(info.file);
+    } else if (info.file.status === 'error') {
+      // Xử lý khi có lỗi
+      console.error('Upload failed:', info.file.error);
+    }
+  };
+  const customRequest = async ({ file, onSuccess, onError }) => {
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      const response = await axios.post(`${CONFIG.API_URL}auth/user/update-avatar/${userData._id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Gọi onSuccess để thông báo thành công
+      onSuccess();
+
+      setFile(CONFIG.HOST + response.data.path);
+      // Lưu đường dẫn ảnh vào state hoặc dispatch action nếu cần
+      console.log(response.data, file);
+    } catch (error) {
+      // Gọi onError để thông báo lỗi
+      onError(error);
+      console.error('Error uploading avatar:', error);
+    }
+  };
 
   const handleProvinceChange = (value) => {
     setSelectedProvince(value);
@@ -64,10 +100,20 @@ const UserInfo = () => {
     setSelectedWard('');
     setWards([]);
 
-    const selectedProvinceData = provinces.find((province) => province.code === value);
-    if (selectedProvinceData && selectedProvinceData.districts) {
-      setDistricts(selectedProvinceData.districts);
-    }
+    const selectedProvinceData = provinces.find((province) => province.province_id === value);
+    selectedProvinceData &&
+      axios
+        .get('https://vapi.vnappmob.com/api/province/district/' + selectedProvinceData.province_id)
+        .then((response) => {
+          console.log('results', response.data['results']);
+          setDistricts(response.data['results']);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    // if (selectedProvinceData && selectedProvinceData.districts) {
+    //   setDistricts(selectedProvinceData.districts);
+    // }
   };
 
   const handleDistrictChange = (value) => {
@@ -75,10 +121,18 @@ const UserInfo = () => {
     setSelectedWard('');
     setWards([]);
 
-    const selectedDistrictData = districts.find((district) => district.code === value);
-    if (selectedDistrictData && selectedDistrictData.wards) {
-      setWards(selectedDistrictData.wards);
-    }
+    const selectedDistrictData = districts.find((district) => district.district_id === value);
+
+    selectedDistrictData &&
+      axios
+        .get('https://vapi.vnappmob.com/api/province/ward/' + selectedDistrictData.district_id)
+        .then((response) => {
+          console.log('results', response.data['results']);
+          setWards(response.data['results']);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
   };
 
   const handleAddAddress = () => {
@@ -114,12 +168,12 @@ const UserInfo = () => {
 
     const { homeAddress, ...otherValues } = values;
 
-    const selectedProvinceData = provinces.find((province) => province.code === selectedProvince);
-    const selectedDistrictData = districts.find((district) => district.code === selectedDistrict);
-    const selectedWardData = wards.find((ward) => ward.code === selectedWard);
+    const selectedProvinceData = provinces.find((province) => province.province_id === selectedProvince);
+    const selectedDistrictData = districts.find((district) => district.district_id === selectedDistrict);
+    const selectedWardData = wards.find((ward) => ward.ward_id === selectedWard);
 
-    const fullAddress = `${homeAddress} / ${selectedWardData?.name || ''} / ${selectedDistrictData?.name || ''} / ${
-      selectedProvinceData?.name || ''
+    const fullAddress = `${homeAddress} / ${selectedWardData?.ward_name || ''} / ${selectedDistrictData?.district_name || ''} / ${
+      selectedProvinceData?.province_name || ''
     }`;
     console.log(fullAddress);
 
@@ -128,16 +182,24 @@ const UserInfo = () => {
         userId: userData._id,
         updatedData: {
           ...otherValues,
-          address: fullAddress,
+          address: homeAddress ? fullAddress : '',
         },
       };
 
       const response = await axios.post(`${CONFIG.API_URL}auth/user/update`, updatedData);
       setLoading(false);
       setUserData(response.data.user);
+      console.log(userData);
+      //   setFile(CONFIG.HOST + userData.picture);
 
       localStorage.setItem('user', JSON.stringify(response.data.user));
       message.info('Lưu thông tin thành công!');
+      setSelectedProvince('');
+      setDistricts([]);
+      setSelectedDistrict('');
+      setWards([]);
+      setSelectedWard('');
+      window.location.reload();
     } catch (error) {
       setLoading(false);
       console.error('Lỗi khi cập nhật thông tin người dùng:', error);
@@ -171,10 +233,13 @@ const UserInfo = () => {
             name="image"
             listType="picture-card"
             maxCount={1}
+            customRequest={customRequest}
+            onChange={handleFileChange}
+            defaultFileList={file_ ? [{ uid: '1', name: 'avatar.jpg', status: 'done', url: file_ }] : []}
             // onChange={handleImageChange}
             multiple={false}
           >
-            {"+ Tải ảnh lên"}
+            {'+ Tải ảnh lên'}
           </Upload>
         </Form.Item>
         {userData && userData.address && userData.address.length > 0 && (
@@ -195,10 +260,10 @@ const UserInfo = () => {
         {showAdditionalAddress ? (
           <>
             <Form.Item name="province" label="Tỉnh/thành phố" rules={[{ required: true, message: 'Vui lòng chọn tỉnh/thành phố!' }]}>
-              <Select placeholder="Chọn quận/huyện" onChange={handleProvinceChange} value={selectedProvince} style={{ width: 200 }}>
+              <Select placeholder="Chọn tỉnh/thành phố" onChange={handleProvinceChange} value={selectedProvince} style={{ width: 200 }}>
                 {provinces.map((province) => (
-                  <Option key={province.code} value={province.code}>
-                    {province.name}
+                  <Option key={province.province_id} value={province.province_id}>
+                    {province.province_name}
                   </Option>
                 ))}
               </Select>
@@ -212,8 +277,8 @@ const UserInfo = () => {
                 disabled={!selectedProvince}
               >
                 {districts.map((district) => (
-                  <Option key={district.code} value={district.code}>
-                    {district.name}
+                  <Option key={district.district_id} value={district.district_id}>
+                    {district.district_name}
                   </Option>
                 ))}
               </Select>
@@ -227,14 +292,14 @@ const UserInfo = () => {
                 disabled={!selectedDistrict}
               >
                 {wards.map((ward) => (
-                  <Option key={ward.code} value={ward.code}>
-                    {ward.name}
+                  <Option key={ward.ward_id} value={ward.ward_id}>
+                    {ward.ward_name}
                   </Option>
                 ))}
               </Select>
             </Form.Item>
             <Form.Item name="homeAddress" label="Địa chỉ tận nơi" rules={[{ required: true, message: 'Vui lòng nhập địa chỉ tận nơi!' }]}>
-              <Input />
+              <Input disabled={!selectedWard} />
             </Form.Item>
 
             <Form.Item>
@@ -254,7 +319,7 @@ const UserInfo = () => {
         </Form.Item>
       </Form>
 
-      <Modal title="Xóa địa chỉ" visible={deleteModalVisible} onOk={confirmDeleteAddress} onCancel={() => setDeleteModalVisible(false)}>
+      <Modal title="Xóa địa chỉ" open={deleteModalVisible} onOk={confirmDeleteAddress} onCancel={() => setDeleteModalVisible(false)}>
         <p>Bạn có chắc chắn muốn xóa địa chỉ này?</p>
       </Modal>
     </div>

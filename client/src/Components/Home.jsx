@@ -172,9 +172,7 @@ function Home() {
                   <Title level={5} style={{ color: '#D2691E' }}>
                     Hỗ Trợ 24/7
                   </Title>
-                  <p className={styles.benefitText}>
-                    Đội ngũ hỗ trợ của chúng tôi sẽ luôn có mặt để hỗ trợ bạn<nav></nav>
-                  </p>{' '}
+                  <p className={styles.benefitText}>Đội ngũ hỗ trợ của chúng tôi sẽ luôn có mặt để hỗ trợ bạn</p>{' '}
                   {/* Tùy chỉnh kích thước chữ */}
                 </div>
               </div>

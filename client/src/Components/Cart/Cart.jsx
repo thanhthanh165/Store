@@ -10,7 +10,7 @@ const { Option } = Select;
 const Cart = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isloggedin, setIsLoggedIn] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [product, setProduct] = useState();
@@ -46,7 +46,7 @@ const Cart = () => {
   //lấy thông tin giỏ hàng từ người dùng
   useEffect(() => {
     // Lấy thông tin giỏ hàng từ server nếu đã đăng nhập
-    if (isLoggedIn) {
+    if (isloggedin) {
       const userId = user._id;
 
       axios
@@ -59,7 +59,7 @@ const Cart = () => {
           console.error(error);
         });
     }
-  }, [isLoggedIn]);
+  }, [isloggedin]);
 
   const handleLogin = () => {
     // Điều hướng đến trang đăng nhập
@@ -319,7 +319,7 @@ const Cart = () => {
   return (
     <div style={{ minHeight: '500px' }}>
       {/* Hiển thị Empty khi chưa đăng nhập */}
-      {!isLoggedIn && (
+      {!isloggedin && (
         <div
           style={{
             display: 'flex',
@@ -337,7 +337,7 @@ const Cart = () => {
       )}
 
       {/* Render div riêng khi đã đăng nhập */}
-      {isLoggedIn && (
+      {isloggedin ? (
         <div className="cart-container">
           {/* gio hang */}
           {cartItems.length > 0 ? (
@@ -423,11 +423,13 @@ const Cart = () => {
 
           {/* user */}
         </div>
+      ) : (
+        ''
       )}
 
       {/* Modal thông báo */}
       <Modal
-        visible={showModal}
+        open={showModal}
         title="Thông báo"
         onCancel={handleCancel}
         footer={[

@@ -59,7 +59,7 @@ function OrderInfo() {
   const [isRatingOrder, setIsRatingOrder] = useState(false);
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isloggedin, setIsLoggedIn] = useState(false);
   const location = useLocation();
 
   //kiểm tra trạng thái đăng nhập
@@ -88,7 +88,7 @@ function OrderInfo() {
   useEffect(() => {
     // Gọi API để lấy danh sách các đơn hàng của người dùng
 
-    if (isLoggedIn) {
+    if (isloggedin) {
       const userId = user._id;
       axios
         .get(`${CONFIG.API_URL}orders/${userId}`)
@@ -99,7 +99,7 @@ function OrderInfo() {
           console.error(error);
         });
     }
-  }, [isLoggedIn, orderStatus]);
+  }, [isloggedin, orderStatus]);
 
   useEffect(() => {
     // Lọc các đơn hàng theo trạng thái được chọn
@@ -279,7 +279,7 @@ function OrderInfo() {
       </div>
 
       {/* Modal hiển thị chi tiết đơn hàng */}
-      <Modal title="Thông tin đơn hàng" visible={!!selectedOrder} onCancel={closeModal} footer={null} width={1000}>
+      <Modal title="Thông tin đơn hàng" open={!!selectedOrder} onCancel={closeModal} footer={null} width={1000}>
         {selectedOrder && (
           <div>
             {/* <p>
@@ -329,7 +329,7 @@ function OrderInfo() {
         )}
       </Modal>
       <Modal
-        visible={showModal}
+        open={showModal}
         title="Thông báo"
         onCancel={handleCancel}
         footer={[

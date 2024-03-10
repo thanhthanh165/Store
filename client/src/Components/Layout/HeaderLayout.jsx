@@ -5,13 +5,14 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import logoImage from '../../Img/Logo store.png';
 import styles from '../css/Header.module.css';
 import Menu_custom from './menu';
+import CONFIG from '../../config';
 
 const { Header } = Layout;
 
 const HeaderLayout = () => {
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isloggedin, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -92,10 +93,10 @@ const HeaderLayout = () => {
             </Link>
           </Col>
           <Col flex={1}>
-            <Menu_custom isLoggedIn={isLoggedIn} setMenuVisible={setMenuVisible} />
+            <Menu_custom isloggedin={isloggedin} setMenuVisible={setMenuVisible} />
           </Col>
           <Col flex={1} style={{ textAlign: 'right' }}>
-            {isLoggedIn ? (
+            {isloggedin ? (
               <>
                 <div>
                   <span style={{ marginRight: 14 }}>Xin chào {user.name.split(' ')[0] + ' ! '} </span>
@@ -106,7 +107,8 @@ const HeaderLayout = () => {
                     style={{ marginRight: 5, verticalAlign: 'middle' }}
                   />
                   <span className="avatar-wrapper" onClick={handleUserClick}>
-                    {user?.picture ? <Avatar src={user.picture} /> : <Avatar icon={<UserOutlined />} />}
+                    {user?.picture ? <Avatar src={`${CONFIG.HOST}${user.picture}`} /> : <Avatar icon={<UserOutlined />} />}
+                    {console.log(`${CONFIG.HOST}${user.picture}`)}
                   </span>
 
                   {menuVisible && (

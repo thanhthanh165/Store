@@ -144,7 +144,7 @@ function ReviewOrder() {
       </div>
 
       {/* Modal đánh giá */}
-      <Modal title="Đánh giá sản phẩm" visible={isModalVisible} onOk={handleReviewSubmit} onCancel={() => setIsModalVisible(false)}>
+      <Modal title="Đánh giá sản phẩm" open={isModalVisible} onOk={handleReviewSubmit} onCancel={() => setIsModalVisible(false)}>
         <Form>
           <Form.Item label="Xếp hạng">
             <Rate allowHalf defaultValue={0} onChange={handleRateChange} value={rating} />
