@@ -25,7 +25,7 @@ const sliderSettings = {
   slidesToShow: 4,
   slidesToScroll: 4,
   autoplay: true,
-  autoplaySpeed: 4000,
+  autoplaySpeed: 1000,
 };
 
 function Home() {
@@ -130,14 +130,22 @@ function Home() {
             <p>Loading...</p>
           ) : (
             newProducts.slice(0, 8).map((product) => (
-              <Col key={product._id} xs={12} sm={8} md={6} lg={6}>
-                <Card
-                  cover={<img src={product.imageUrl[0]} alt={product.name} />}
-                  onClick={() => handleCardClick(product._id)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <Card.Meta title={product.name} description={`Giá: ${product.price?.toLocaleString('en-US')}`} />
-                </Card>
+              <Col key={product._id} xs={12} sm={8} md={6} lg={6} style={{}}>
+                <a href={'/products/' + product._id}>
+                  <Card
+                    cover={
+                      <img
+                        src={product.imageUrl[0]}
+                        alt={product.name}
+                        style={{ width: 'auto', margin: '20% auto 20% auto', height: '15vw' }}
+                      />
+                    }
+                    onClick={() => handleCardClick(product._id)}
+                    style={{ cursor: 'pointer', height: '100%' }}
+                  >
+                    <Card.Meta title={product.name} description={`Giá: ${product.price?.toLocaleString('en-US')}`} />
+                  </Card>
+                </a>
               </Col>
             ))
           )}
@@ -243,9 +251,15 @@ function Home() {
           {bestSellingProducts.map((product) => (
             <div key={product._id} onClick={() => handleCardClick(product._id)}>
               <Card
-                cover={<img src={product.imageUrl[0]} alt={product.name} />}
+                cover={
+                  <img
+                    src={product.imageUrl[0]}
+                    alt={product.name}
+                    style={{ width: 'auto', margin: '20% auto 20% auto', height: '10vw' }}
+                  />
+                }
                 onClick={() => handleCardClick(product._id)}
-                style={{ cursor: 'pointer', padding: '5px', margin: '5px' }}
+                style={{ cursor: 'pointer', padding: '10px', margin: '5px' }}
               >
                 <Card.Meta title={product.name} description={`Giá: ${product.price?.toLocaleString('en-US')}`} />
               </Card>
